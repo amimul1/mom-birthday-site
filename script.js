@@ -18,7 +18,7 @@ function playChime(){
   envTone(196.0,t,0.45,'sine',0.03);
 }
 
-/* ===== Slide logic (no transforms) ===== */
+/* ===== Slide logic (no cropping) ===== */
 function show(i, withChime=true){
   slides[idx].classList.remove('active');
   idx = (i + slides.length) % slides.length;
@@ -59,7 +59,7 @@ function launchConfetti(){
 document.getElementById('confettiBtn').addEventListener('click', launchConfetti);
 setTimeout(launchConfetti, 1500); setInterval(launchConfetti, 22000);
 
-/* ===== Birthday song (autoplay with fallback) ===== */
+/* ===== Birthday song (ALWAYS ON) ===== */
 let songPlaying=false, songTimer=null, songNodes=[], masterGain=null;
 function noteFreq(n){ const A4=440, m=n.match(/^([A-G][b#]?)(\d)$/),
   notes={'C':-9,'C#':-8,'Db':-8,'D':-7,'D#':-6,'Eb':-6,'E':-5,'F':-4,'F#':-3,'Gb':-3,'G':-2,'G#':-1,'Ab':-1,'A':0,'A#':1,'Bb':1,'B':2};
@@ -72,7 +72,10 @@ function playNote(name, when, dur=0.38, vel=0.18){
   const t=when??ctx.currentTime; g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vel,t+0.03); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
   o1.connect(g); o2.connect(g); g.connect(masterGain); o1.start(t); o2.start(t); o1.stop(t+dur+0.05); o2.stop(t+dur+0.05); songNodes.push(o1,o2,g);
 }
-function stopSong(){ songPlaying=false; if(songTimer){ clearTimeout(songTimer); songTimer=null; } try{ songNodes.forEach(n=>{ try{ n.disconnect(); }catch(_){} }); }catch(_){} songNodes=[]; }
+function stopSong(){ // not used, but kept for safety
+  songPlaying=false; if(songTimer){ clearTimeout(songTimer); songTimer=null; }
+  try{ songNodes.forEach(n=>{ try{ n.disconnect(); }catch(_){} }); }catch(_){} songNodes=[];
+}
 function playBirthdaySong(loop=true){
   ensureAudio().resume(); stopSong(); songPlaying=true;
   const seq=[['G4',0.0,0.42],['G4',0.5,0.42],['A4',1.0,0.8],['G4',1.9,0.8],['C5',2.8,0.8],['B4',3.7,1.2],
@@ -84,17 +87,25 @@ function playBirthdaySong(loop=true){
   [0,5.0,10.0,16.0].forEach(t=>envTone(987.77,start+t,0.45,'sine',0.04));
   const total=22.5; if(loop){ songTimer=setTimeout(()=>{ if(songPlaying) playBirthdaySong(true); }, total*1000); }
 }
-document.getElementById('songBtn').addEventListener('click', ()=>{
-  ensureAudio().resume(); if(!songPlaying){ playBirthdaySong(true); document.getElementById('songBtn').textContent='⏹ Stop Song'; }
-  else { stopSong(); document.getElementById('songBtn').textContent='🎵 Birthday Song'; }
+
+/* keep chimes from overlapping when song is running */
+const _playChime = playChime; playChime = () => { if(!songPlaying) _playChime(); };
+
+/* Try to ensure the song is always on */
+function ensureLoopingSong(){
+  try{
+    const a = ensureAudio();
+    if (a.state !== 'running') a.resume();
+    if (!songPlaying) playBirthdaySong(true);
+  }catch(_){}
+}
+window.addEventListener('load', ensureLoopingSong);
+/* If autoplay is blocked, any of these will start it */
+['pointerdown','keydown','visibilitychange','pageshow','focus'].forEach(ev=>{
+  window.addEventListener(ev, ensureLoopingSong, { passive: true });
 });
-const _playChime = playChime; playChime = function(){ if(!songPlaying) _playChime(); };
-window.addEventListener('load', ()=>{
-  try{ ensureAudio().resume(); playBirthdaySong(true); document.getElementById('songBtn').textContent='⏹ Stop Song'; }catch(_){}
-  const onceStart=()=>{ try{ ensureAudio().resume(); playBirthdaySong(true); document.getElementById('songBtn').textContent='⏹ Stop Song'; }catch(_){}
-    document.removeEventListener('pointerdown', onceStart); };
-  document.addEventListener('pointerdown', onceStart, {once:true});
-});
+/* Re-check periodically (some mobile browsers suspend/resume contexts) */
+setInterval(ensureLoopingSong, 10000);
 
 /* initial caption */
 captionEl.textContent = slides[0].dataset.caption || 'Memory 1';
