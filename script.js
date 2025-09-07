@@ -1,4 +1,3 @@
-
 let idx = 0;
 const slides = Array.from(document.querySelectorAll('.slide'));
 const captionEl = document.getElementById('caption');
@@ -29,9 +28,7 @@ function envTone(f, when, dur, type='sine', gain=0.06) {
 function playChime() {
   const ctx = ensureAudio();
   const t = ctx.currentTime + 0.02;
-  // A sweet little major chord arpeggio
   [523.25, 659.25, 783.99].forEach((f, i) => envTone(f, t + i*0.08, 0.35, i===1?'triangle':'sine', 0.055));
-  // soft bass
   envTone(196.00, t + 0.0, 0.45, 'sine', 0.03);
 }
 
@@ -84,8 +81,8 @@ document.getElementById('fsBtn').addEventListener('click', () => {
   else document.exitFullscreen?.();
 });
 
-// Confetti
-document.getElementById('confettiBtn').addEventListener('click', () => {
+// Confetti as a function + click handler
+function launchConfetti(){
   const layer = document.createElement('div');
   layer.className = 'confetti';
   const count = 140;
@@ -100,19 +97,20 @@ document.getElementById('confettiBtn').addEventListener('click', () => {
   }
   document.body.appendChild(layer);
   setTimeout(() => layer.remove(), 5200);
-});
+}
+document.getElementById('confettiBtn').addEventListener('click', launchConfetti);
 
-// Auto-update caption initially
-captionEl.textContent = slides[0].dataset.caption || 'Memory 1';
+// Auto-confetti bursts
+setTimeout(launchConfetti, 1500);
+setInterval(launchConfetti, 22000);
 
-
-/* Birthday Song */
+// Birthday Song
 let songPlaying = false;
 let songTimer = null;
 let songNodes = [];
 let masterGain = null;
 
-function noteFreq(n){ // e.g., 'C4', 'G#4'
+function noteFreq(n){
   const A4 = 440;
   const notes = {'C':-9,'C#':-8,'Db':-8,'D':-7,'D#':-6,'Eb':-6,'E':-5,'F':-4,'F#':-3,'Gb':-3,'G':-2,'G#':-1,'Ab':-1,'A':0,'A#':1,'Bb':1,'B':2};
   const m = n.match(/^([A-G][b#]?)(\d)$/);
@@ -129,7 +127,6 @@ function playNote(name, when, dur=0.38, velocity=0.18){
     masterGain.connect(ctx.destination);
   }
   const f = typeof name === 'number' ? name : noteFreq(name);
-  // Two-oscillator mellow voice
   const o1 = ctx.createOscillator();
   const o2 = ctx.createOscillator();
   const g = ctx.createGain();
@@ -165,13 +162,11 @@ function playBirthdaySong(loop=true){
   ];
   const ctx = ensureAudio();
   const start = ctx.currentTime + 0.08;
-  // Backing pad simple chords
   const chords = [
     ['C4',0.0,3.6], ['D4',5.0,3.8], ['C4',10.0,4.8], ['F4',16.0,2.0], ['C4',18.4,2.4]
   ];
   chords.forEach(([n,t,d]) => playNote(n, start + t, d, 0.08));
   seq.forEach(([n,t,d]) => playNote(n, start + t, d, 0.17));
-  // soft bell at start of each 2 bars
   [0,5.0,10.0,16.0].forEach(t => envTone(987.77, start+t, 0.45, 'sine', 0.04));
   const total = 22.5;
   if (loop) {
@@ -193,3 +188,30 @@ document.getElementById('songBtn').addEventListener('click', () => {
 // Lower slide-change chime when song is playing to avoid clutter
 const _playChime = playChime;
 playChime = function(){ if (!songPlaying) _playChime(); };
+
+// Auto-start birthday song (best effort; some browsers require a click)
+window.addEventListener('load', () => {
+  try {
+    ensureAudio().resume();
+    if (typeof playBirthdaySong === 'function') {
+      playBirthdaySong(true);
+      const btn = document.getElementById('songBtn');
+      if (btn) btn.textContent = '⏹ Stop Song';
+    }
+  } catch(_) {}
+  const onceStart = () => {
+    try {
+      ensureAudio().resume();
+      if (typeof playBirthdaySong === 'function') {
+        playBirthdaySong(true);
+        const btn = document.getElementById('songBtn');
+        if (btn) btn.textContent = '⏹ Stop Song';
+      }
+    } catch(_) {}
+    document.removeEventListener('pointerdown', onceStart);
+  };
+  document.addEventListener('pointerdown', onceStart, { once: true });
+});
+
+// Initial caption
+captionEl.textContent = slides[0].dataset.caption || 'Memory 1';
