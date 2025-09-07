@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Happy Birthday, Ma! 🎂</title>
+  <meta name="description" content="A little website of love and memories."/>
+  <link rel="preload" as="image" href="assets/images/0d51705a-519c-4396-9df2-21a207a67d2b.jpg">
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header class="hero">
+    <h1>Happy Birthday, Ma! <span class="heart">❤️</span></h1>
+    <p class="subtitle">With love from your family</p>
+    <div class="controls">
+      <button id="playBtn">▶️ Play music</button>
+      <button id="pauseBtn">⏸ Pause</button>
+      <button id="confettiBtn">🎉 Confetti</button>
+      <button id="fsBtn">⛶ Fullscreen</button>
+      <button id="songBtn">🎵 Birthday Song</button>
+    </div>
+    <p class="hint">Tip: click anywhere to pause / play the slideshow.</p>
+  </header>
+
+  <main>
+    <section id="slideshow" class="slideshow" aria-label="Photo memories">
+      <figure class="slide active" style="background-image:url(assets/images/0d51705a-519c-4396-9df2-21a207a67d2b.jpg)" data-caption="Memory 1"></figure><figure class="slide" style="background-image:url(assets/images/86edb507-0d32-43aa-8d65-28b260461423.jpg)" data-caption="Memory 2"></figure><figure class="slide" style="background-image:url(assets/images/9a6bb2be-e724-4563-b937-d4c073c6bc6b.jpg)" data-caption="Memory 3"></figure><figure class="slide" style="background-image:url(assets/images/IMG_2641.JPG)" data-caption="Memory 4"></figure><figure class="slide" style="background-image:url(assets/images/aebb2b64-43e2-490b-8415-af29b6bcb163.jpg)" data-caption="Memory 5"></figure><figure class="slide" style="background-image:url(assets/images/cd6ae42d-882e-4d83-a95b-ee7ede26b4bc.jpg)" data-caption="Memory 6"></figure><figure class="slide" style="background-image:url(assets/images/d96fff2c-1f4d-4b26-bb97-6a1e037032b3.jpg)" data-caption="Memory 7"></figure><figure class="slide" style="background-image:url(assets/images/df872d0d-1780-48c1-9ff9-627a150cde6f.jpg)" data-caption="Memory 8"></figure><figure class="slide" style="background-image:url(assets/images/fcb1e516-2c76-4b19-8104-4db2631c2ddc.jpg)" data-caption="Memory 9"></figure>
+    </section>
+    <div id="caption" class="caption">Memory 1</div>
+  </main>
+
+  <footer>
+    <p>Made with love 💛 — wishing you joy, health and endless smiles.</p>
+  </footer>
+
+  <script>
+    window.SLIDE_INTERVAL_MS = 4200; // time per slide
+    window.SLIDE_FILENAMES = ["0d51705a-519c-4396-9df2-21a207a67d2b.jpg", "86edb507-0d32-43aa-8d65-28b260461423.jpg", "9a6bb2be-e724-4563-b937-d4c073c6bc6b.jpg", "IMG_2641.JPG", "aebb2b64-43e2-490b-8415-af29b6bcb163.jpg", "cd6ae42d-882e-4d83-a95b-ee7ede26b4bc.jpg", "d96fff2c-1f4d-4b26-bb97-6a1e037032b3.jpg", "df872d0d-1780-48c1-9ff9-627a150cde6f.jpg", "fcb1e516-2c76-4b19-8104-4db2631c2ddc.jpg"];
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

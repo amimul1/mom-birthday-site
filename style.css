@@ -1,0 +1,106 @@
+
+:root {
+  --bg: #0f0f13;
+  --fg: #ffffff;
+  --accent: #ffb3c1;
+  --soft: #ffd6dc;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+  color: var(--fg);
+  background: radial-gradient(1200px 700px at top left, #1c1c23, var(--bg));
+  overflow-x: hidden;
+}
+.hero {
+  text-align: center;
+  padding: 28px 16px 8px;
+}
+h1 {
+  margin: 12px 0 6px;
+  font-size: clamp(28px, 4vw, 44px);
+  letter-spacing: 0.5px;
+}
+.subtitle { margin: 0; opacity: 0.9; }
+.heart { filter: drop-shadow(0 2px 4px rgba(255,0,70,.35)); }
+
+.controls { margin: 14px 0 6px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.controls button {
+  background: #23232b;
+  color: var(--fg);
+  border: 1px solid #3b3b47;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform .08s ease, background .2s ease;
+}
+.controls button:hover { transform: translateY(-1px); background: #2a2a34; }
+
+.hint { opacity: .7; font-size: 12px; }
+
+.slideshow {
+  position: relative;
+  width: min(1100px, 92vw);
+  height: min(70vh, 760px);
+  margin: 14px auto 6px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #0b0b0f;
+  box-shadow: 0 12px 28px rgba(0,0,0,.35), 0 6px 16px rgba(0,0,0,.3) inset;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center center;
+  opacity: 0;
+  transform: scale(1.08);
+  transition: opacity 1200ms ease, transform 8s ease;
+}
+.slide.active {
+  opacity: 1;
+  transform: scale(1);
+  animation: kenburns 8s ease both;
+}
+
+@keyframes kenburns {
+  0% { transform: scale(1.06) translate3d(-8px, -6px, 0); }
+  100% { transform: scale(1.12) translate3d(8px, 6px, 0); }
+}
+
+.caption {
+  text-align: center;
+  font-size: clamp(16px, 2.5vw, 20px);
+  margin: 8px 0 12px;
+  opacity: .9;
+}
+
+/* confetti */
+.confetti {
+  position: fixed;
+  top: -10vh;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+}
+.confetti i{
+  position: absolute;
+  width: 10px; height: 14px;
+  background: hsl(var(--h) 80% 60%);
+  transform: rotate(var(--r));
+  top: -20px;
+  border-radius: 2px;
+  animation: fall linear forwards;
+}
+@keyframes fall {
+  to {
+    transform: translateY(110vh) rotate(calc(var(--r) * -1));
+    opacity: .95;
+  }
+}
+
+footer { text-align: center; padding: 8px 0 24px; opacity: .7; }
