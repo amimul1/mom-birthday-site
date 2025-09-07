@@ -1,4 +1,3 @@
-
 :root {
   --bg: #0f0f13;
   --fg: #ffffff;
@@ -55,21 +54,17 @@ h1 {
 .slide {
   position: absolute;
   inset: 0;
-  background-size: cover;
+  background-size: contain;
+  background-repeat: no-repeat;
   background-position: center center;
   opacity: 0;
-  transform: scale(1.08);
-  transition: opacity 1200ms ease, transform 8s ease;
-}
-.slide.active {
-  opacity: 1;
-  transform: scale(1);
-  animation: kenburns 8s ease both;
+  transform: none;
+  transition: opacity 1200ms ease;
 }
 
-@keyframes kenburns {
-  0% { transform: scale(1.06) translate3d(-8px, -6px, 0); }
-  100% { transform: scale(1.12) translate3d(8px, 6px, 0); }
+.slide.active {
+  opacity: 1;
+  transform: none;
 }
 
 .caption {
